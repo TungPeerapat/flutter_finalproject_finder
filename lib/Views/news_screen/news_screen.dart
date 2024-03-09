@@ -20,7 +20,6 @@ class NewsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     var allproducts = '';
     var controller = Get.find<NewsController>();
 
@@ -41,10 +40,10 @@ class NewsScreen extends StatelessWidget {
               decoration: InputDecoration(
                 border: InputBorder.none,
                 suffixIcon: const Icon(Icons.search).onTap(() {
-                  if (controller.searchController.text.isNotEmptyAndNotNull){
+                  if (controller.searchController.text.isNotEmptyAndNotNull) {
                     Get.to(() => SearchScreen(
-                      title: controller.searchController.text,
-                  ));
+                          title: controller.searchController.text,
+                        ));
                   }
                 }),
                 filled: true,
@@ -185,56 +184,64 @@ class NewsScreen extends StatelessWidget {
                           scrollDirection: Axis.horizontal,
                           child: FutureBuilder(
                             future: FirestoreServices.getFeaturedProducts(),
-                            builder: (context,AsyncSnapshot<QuerySnapshot> snapshot) {
-
-                              if(!snapshot.hasData) {
+                            builder: (context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (!snapshot.hasData) {
                                 return Center(
                                   child: loadingIndcator(),
                                 );
                               } else if (snapshot.data!.docs.isEmpty) {
-                                return "No featured products".text.white.makeCentered();
+                                return "No featured products"
+                                    .text
+                                    .white
+                                    .makeCentered();
                               } else {
-
                                 var featuredData = snapshot.data!.docs;
 
                                 return Row(
-                                children: List.generate( 
-                                  featuredData.length,
-                                  (index) => Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Image.network(
-                                            featuredData[index]['p_imgs'][0],
-                                            width: 140,
-                                            height: 195,
-                                            fit: BoxFit.cover,
-                                          ),
-                                          10.heightBox,
-                                          "${ featuredData[index]['p_name']}"
-                                              .text
-                                              .fontFamily(semibold)
-                                              .color(fontBlack)
-                                              .make(),
-                                          5.heightBox,
-                                          "${featuredData[index]['p_price']}"
-                                              .numCurrency
-                                              .text
-                                              .color(primaryApp)
-                                              .fontFamily(bold)
-                                              .size(16)
+                                  children: List.generate(
+                                      featuredData.length,
+                                      (index) => Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Image.network(
+                                                featuredData[index]['p_imgs']
+                                                    [0],
+                                                width: 140,
+                                                height: 195,
+                                                fit: BoxFit.cover,
+                                              ),
+                                              10.heightBox,
+                                              "${featuredData[index]['p_name']}"
+                                                  .text
+                                                  .fontFamily(semibold)
+                                                  .color(fontBlack)
+                                                  .make(),
+                                              5.heightBox,
+                                              "${featuredData[index]['p_price']}"
+                                                  .numCurrency
+                                                  .text
+                                                  .color(primaryApp)
+                                                  .fontFamily(bold)
+                                                  .size(16)
+                                                  .make()
+                                            ],
+                                          )
+                                              .box
+                                              .white
+                                              .margin(
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 4))
+                                              .rounded
+                                              .padding(const EdgeInsets.all(8))
                                               .make()
-                                        ],
-                                      )
-                                          .box
-                                          .white
-                                          .margin(
-                                              const EdgeInsets.symmetric(horizontal: 4))
-                                          .rounded
-                                          .padding(const EdgeInsets.all(8))
-                                          .make()
-                                          .onTap(() {
-                                            Get.to(() => ItemDetails(title: "${featuredData[index]['p_name']}",
-                                            data: featuredData[index],));
+                                              .onTap(() {
+                                            Get.to(() => ItemDetails(
+                                                  title:
+                                                      "${featuredData[index]['p_name']}",
+                                                  data: featuredData[index],
+                                                ));
                                           })),
                                 );
                               }
@@ -268,63 +275,74 @@ class NewsScreen extends StatelessWidget {
 
                   20.heightBox,
                   Align(
-                    alignment: Alignment.centerLeft,
-                    child: allproducts.text.fontFamily(semibold).color(fontGreyDark).size(18).make()),
+                      alignment: Alignment.centerLeft,
+                      child: allproducts.text
+                          .fontFamily(semibold)
+                          .color(fontGreyDark)
+                          .size(18)
+                          .make()),
                   20.heightBox,
 
                   StreamBuilder(
-                    stream: FirestoreServices.allproducts(), 
-                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
-                      if(!snapshot.hasData){
-                        return loadingIndcator();
-                      } else {
-                        var allproductsdata = snapshot.data!.docs;
-                        return GridView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: allproductsdata.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, mainAxisSpacing: 8, crossAxisSpacing:8, mainAxisExtent: 310),
-                      itemBuilder: (context, index) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Image.network(
-                                          allproductsdata[index]['p_imgs'][0],
-                                          width: 170,
-                                          height: 210,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        const Spacer(),
-                                        "${allproductsdata[index]['p_name']}"
-                                            .text
-                                            .fontFamily(semibold)
-                                            .color(fontBlack)
-                                            .make(),
-                                        "${allproductsdata[index]['p_price']}"
-                                            .text
-                                            .color(primaryApp)
-                                            .fontFamily(bold)
-                                            .size(16)
-                                            .make(),
-                                            10.heightBox,
-                                      ],
-                                    )
-                                        .box
-                                        .white
-                                        .margin(
-                                            const EdgeInsets.symmetric(horizontal: 2))
-                                        .rounded
-                                        .padding(const EdgeInsets.all(12))
-                                        .make().onTap(() {
-                                          Get.to(( )=> ItemDetails(
-                                            title: "${allproductsdata[index]['p_name']}",
-                                            data: allproductsdata[index],
-                                            ));
-                                        });
-                      });
-                      }
-                    }),
+                      stream: FirestoreServices.allproducts(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (!snapshot.hasData) {
+                          return loadingIndcator();
+                        } else {
+                          var allproductsdata = snapshot.data!.docs;
+                          return GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: allproductsdata.length,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      mainAxisSpacing: 8,
+                                      crossAxisSpacing: 8,
+                                      mainAxisExtent: 310),
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Image.network(
+                                      allproductsdata[index]['p_imgs'][0],
+                                      width: 170,
+                                      height: 210,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    const Spacer(),
+                                    "${allproductsdata[index]['p_name']}"
+                                        .text
+                                        .fontFamily(semibold)
+                                        .color(fontBlack)
+                                        .make(),
+                                    "${allproductsdata[index]['p_price']}"
+                                        .text
+                                        .color(primaryApp)
+                                        .fontFamily(bold)
+                                        .size(16)
+                                        .make(),
+                                    10.heightBox,
+                                  ],
+                                )
+                                    .box
+                                    .white
+                                    .margin(const EdgeInsets.symmetric(
+                                        horizontal: 2))
+                                    .rounded
+                                    .padding(const EdgeInsets.all(12))
+                                    .make()
+                                    .onTap(() {
+                                  Get.to(() => ItemDetails(
+                                        title:
+                                            "${allproductsdata[index]['p_name']}",
+                                        data: allproductsdata[index],
+                                      ));
+                                });
+                              });
+                        }
+                      }),
                 ],
               ),
             ),
